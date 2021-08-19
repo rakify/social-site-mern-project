@@ -22,7 +22,7 @@ mongoose.connect(
   }
 );
 
-//middleware
+//middlewares
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
