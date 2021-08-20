@@ -6,12 +6,11 @@ import { useState } from "react";
 export default function Post({ post }) {
   const [like, setLike] = useState(post.like);
   const [isLiked, setIsLiked] = useState(false);
-
+  
   const likeHandler = () => {
     setLike(isLiked ? like - 1 : like + 1);
     setIsLiked(!isLiked)
   };
-
   return (
     <div className="postContainer">
       <div className="postWrapper">
@@ -33,7 +32,7 @@ export default function Post({ post }) {
         </div>
         <div className="postCenter">
           <span className="postText">{post?.desc}</span>
-          <img className="postImg" src={post.photo} alt="" />
+          <img className="postImg" src={process.env.REACT_APP_PUBLIC_URL+post.photo} alt="" />
         </div>
         <div className="postBottom">
           <div className="postBottomLeft">
