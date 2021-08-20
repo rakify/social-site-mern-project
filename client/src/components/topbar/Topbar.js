@@ -5,11 +5,11 @@ export default function Topbar() {
   return (
     <div className="topbarContainer">
       <div className="topbarLeft">
-        <span className="logo">Social Site</span>
+        <span className="logo">Society</span>
       </div>
       <div className="topbarCenter">
         <div className="searchBar">
-          <Search className='searchIcon' />
+          <Search className="searchIcon" />
           <input
             placeholder="Search for friend or post"
             className="searchInput"
@@ -34,7 +34,7 @@ export default function Topbar() {
             <Chat />
             <span className="topbarIconBadge">1</span>
           </div>
-          <img src="/assets/person/1.jpeg" alt="" className='topbarImg' />
+          <img src="/assets/person/1.jpeg" alt="" className="topbarImg" />
         </div>
       </div>
     </div>
