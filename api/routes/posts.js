@@ -1,9 +1,57 @@
 const router = require("express").Router();
+const path = require("path");
 const Post = require("../models/Post");
 const User = require("../models/User");
 
+//for upload and storing image
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
+});
+
+//multer image upload process starts
+const storage = multer.diskStorage({
+  //destination: 'public/images/product_images/tmp',
+  filename: (_req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+    // path.extname gets the uploaded file extension
+  },
+});
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1000 * 1000, // 1000*1000 Bytes = 1 MB
+  },
+  fileFilter(_req, file, cb) {
+    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+      // upload only png, jpeg and jpg format
+      return cb(new Error("Only .jpg .jpeg .png format allowed"));
+    }
+    cb(undefined, true);
+  },
+});
+//multer image upload process ends
+
 // CREATE A POST
-router.post("/", async (req, res) => {
+router.post("/", upload.single("file"), async (req, res) => {
+  let { userId } = req.body;
+
+  if (req.file) {
+    // Uploading the file to cloudinary
+    try {
+      let result = await cloudinary.uploader.upload(req.file.path, {
+        folder: `social/${userId}`,
+      });
+      req.body.img = result.secure_url;
+      req.body.img_id = result.public_id;
+    } catch (err) {
+      res.send(err);
+    }
+  }
+
   const newPost = new Post(req.body);
   try {
     const savedPost = await newPost.save();
@@ -77,15 +125,27 @@ router.get("/:id", async (req, res) => {
 });
 
 //GET TIMELINE POSTS
-router.get("/timeline/all", async (req, res) => {
-  const { userId } = req.body;
+router.get("/timeline/:userId", async (req, res) => {
+  const { userId } = req.params;
   try {
-    const currentUser = await User.findById(userId);
-    const userPosts = await Post.find({ userId: userId });
+    const currentUser = await User.findOne({ _id: userId });
+    const userPosts = await Post.find({ userId: currentUser._id });
     const friendPosts = await Promise.all(
-      currentUser.followings.map((friendId)=>Post.find({ userId: friendId }))
+      currentUser.followings.map((friendId) => Post.find({ userId: friendId }))
     );
-    res.json(userPosts.concat(...friendPosts));
+    res.status(200).json(userPosts.concat(...friendPosts));
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+//GET PROFILE POSTS
+router.get("/profile/:username", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const currentUser = await User.findOne({ username: username });
+    const userPosts = await Post.find({ userId: currentUser._id });
+    res.status(200).json(userPosts);
   } catch (err) {
     res.status(500).json(err);
   }

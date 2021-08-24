@@ -8,6 +8,7 @@ const usersRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postsRoute = require("./routes/posts");
 
+
 //connect to db
 mongoose.connect(
   process.env.DB_CONNECTION,

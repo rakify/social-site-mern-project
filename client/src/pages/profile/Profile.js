@@ -1,29 +1,54 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Topbar from "../../components/topbar/Topbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Feed from "../../components/feed/Feed";
 import Rightbar from "../../components/rightbar/Rightbar";
 import "./profile.css";
+import {useParams} from "react-router"
 
 export default function Profile() {
+  const [user, setUser] = useState({});
+
+  const username = useParams().username;
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await axios.get(`/users?username=${username}`);
+      setUser(res.data);
+    };
+    fetchUser();
+  }, [username]);
   return (
     <>
-    <Topbar />
-    <div className="profileContainer">
-      <Sidebar />
-      <div className="profileRight">
-      <div className="profileRightTop">
-        <div className="profileCover">
-        <img className="profileCoverImg" src="/assets/post/3.jpeg" alt="" />
-        <img className="profileUserImg" src="/assets/person/7.jpeg" alt="" />
+      <Topbar />
+      <div className="profileContainer">
+        <Sidebar />
+        <div className="profileRight">
+          <div className="profileRightTop">
+            <div className="profileCover">
+              <img
+                className="profileCoverImg"
+                src={user.coverPicture}
+                alt=""
+              />
+              <img
+                className="profileUserImg"
+                src={user.profilePicture}
+                alt=""
+              />
+            </div>
+            <div className="profileInfo">
+              <h4 className="profileInfoName">{user.username}</h4>
+              <span className="profileInfoDesc">{user.desc}</span>
+            </div>
+          </div>
+          <div className="profileRightBottom">
+            <Feed username={username} />
+            <Rightbar user={user} />
+          </div>
         </div>
-        <div className="profileInfo">
-          <h4 className="profileInfoName">Rakib Miah</h4>
-          <span className="profileInfoDesc">Tomorrow is a very dangerous thing..</span>
-        </div>
       </div>
-      <div className="profileRightBottom"><Feed /><Rightbar profile /></div>
-      </div>
-      </div>
-  </>
+    </>
   );
 }

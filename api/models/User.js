@@ -24,7 +24,13 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "",
+      default:
+        "https://img.icons8.com/pastel-glyph/64/000000/person-male--v3.png",
+    },
+    coverPicture: {
+      type: String,
+      default:
+        "http://apy-ingenierie.fr/wp-content/plugins/uix-page-builder/uixpb_templates/images/UixPageBuilderTmpl/default-cover-6.jpg",
     },
     followers: {
       type: Array,
@@ -51,8 +57,8 @@ const UserSchema = new mongoose.Schema(
       maxlength: 50,
     },
     relationship: {
-      type: Number,
-      enum: [1, 2, 3],
+      type: String,
+      default:"",
     },
     gender: {
       type: String,
