@@ -1,7 +1,7 @@
 .feedContainer{
-    flex: 5.5;
-}
-
-.feedWrapper{
-    padding: 20px;
+    flex: 85%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
 }

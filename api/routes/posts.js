@@ -151,4 +151,13 @@ router.get("/profile/:username", async (req, res) => {
   }
 });
 
+//GET PUBLIC/ALL POSTS
+router.get("/fetch/public", async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 module.exports = router;

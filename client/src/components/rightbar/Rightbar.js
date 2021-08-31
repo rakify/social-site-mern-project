@@ -1,5 +1,4 @@
 import "./rightbar.css";
-import { Users } from "../../dummyData";
 import Online from "../online/Online";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
@@ -15,17 +14,15 @@ export default function Rightbar({ user }) {
   );
 
   useEffect(() => {
-    if (user) {
-      const getFriends = async () => {
-        try {
-          const friendList = await axios.get(`/users/friends/${user._id}`);
-          setFriends(friendList.data);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      getFriends();
-    }
+    const getFriends = async () => {
+      try {
+        const friendList = await axios.get(`/users/friends/${user._id}`);
+        setFriends(friendList.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getFriends();
   }, [user]);
 
   const handleFollow = async () => {
@@ -47,84 +44,70 @@ export default function Rightbar({ user }) {
     setFollowed(!followed);
   };
 
-  const HomeRightbar = () => {
-    return (
-      <>
-        <div className="birthdayContiner">
-          <img className="birthdayImg" src="/assets/gift.png" alt="" />
-          <span className="birthayText">
-            <b>Max Weiber</b> and <b>3 other friends</b> have birthday today.
-          </span>
-        </div>
-        <h4 className="rightbarTitle">Online Friends</h4>
-        <ul className="rightbarFriendList">
-          {Users.map((u) => (
-            <Online key={u.id} user={u} />
-          ))}
-        </ul>
-      </>
-    );
-  };
 
   const ProfileRightbar = () => {
     return (
-      <>
+      <div className="rightbarContainer">
         {user.username !== currentUser.username && (
-          <button className="rightbarFollowButton" onClick={handleFollow}>
-            {followed ? "Unfollow" : "Follow"} {followed ? <Remove /> : <Add />}
-          </button>
+          <div className="follow">
+            <button className="rightbarFollowButton" onClick={handleFollow}>
+              {followed ? "Unfollow" : "Follow"}{" "}
+              {followed ? <Remove /> : <Add />}
+            </button>
+          </div>
         )}
-        <h4 className="rightbarTitle">User Information</h4>
-        <div className="rightbarInfo">
-          <div className="rightbarInfoItem">
-            <span className="rightbarInfoKey">Current City:</span>
-            <span className="rightbarInfoValue">
-              {currentUser ? currentUser.city : user.city}
-            </span>
-          </div>
-          <div className="rightbarInfoItem">
-            <span className="rightbarInfoKey">Hometown:</span>
-            <span className="rightbarInfoValue">
-              {currentUser ? currentUser.hometown : user.hometown}
-            </span>
-          </div>
-          <div className="rightbarInfoItem">
-            <span className="rightbarInfoKey">Gender:</span>
-            <span className="rightbarInfoValue">
-              {currentUser ? currentUser.gender : user.gender}
-            </span>
-          </div>
-          <div className="rightbarInfoItem">
-            <span className="rightbarInfoKey">Relationship:</span>
-            <span className="rightbarInfoValue">{user.relationship}</span>
+        <div className="userInfo">
+          <h4 className="rightbarTitle">User Information</h4>
+          <div className="rightbarInfo">
+            <div className="rightbarInfoItem">
+              <span className="rightbarInfoKey">Current City:</span>
+              <span className="rightbarInfoValue">
+                {currentUser ? currentUser.city : user.city}
+              </span>
+            </div>
+            <div className="rightbarInfoItem">
+              <span className="rightbarInfoKey">Hometown:</span>
+              <span className="rightbarInfoValue">
+                {currentUser ? currentUser.hometown : user.hometown}
+              </span>
+            </div>
+            <div className="rightbarInfoItem">
+              <span className="rightbarInfoKey">Gender:</span>
+              <span className="rightbarInfoValue">
+                {currentUser ? currentUser.gender : user.gender}
+              </span>
+            </div>
+            <div className="rightbarInfoItem">
+              <span className="rightbarInfoKey">Relationship:</span>
+              <span className="rightbarInfoValue">{user.relationship}</span>
+            </div>
           </div>
         </div>
-        <h4 className="rightbarTitle">User Followings</h4>
-        <div className="rightbarFollowings">
-          {friends.map((friend) => (
-            <Link
-              to={`/profile/${friend.username}`}
-              style={{ textDecoration: "none" }}
-            >
-              <div className="rightbarFollowing">
-                <img
-                  className="rightbarFollowingImg"
-                  src={friend.profilePicture}
-                  alt=""
-                />
-                <span className="rightbarFollowingName">{friend.username}</span>
-              </div>
-            </Link>
-          ))}
+        <div className="userFollowings">
+          <h4 className="rightbarTitle">User Followings</h4>
+          <div className="rightbarFollowings">
+            {friends.map((friend) => (
+              <Link
+                to={`/profile/${friend.username}`}
+                style={{ textDecoration: "none" }}
+              >
+                <div className="rightbarFollowing">
+                  <img
+                    className="rightbarFollowingImg"
+                    src={friend.profilePicture}
+                    alt=""
+                  />
+                  <span className="rightbarFollowingName">
+                    {friend.username}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </>
+      </div>
     );
   };
 
-  return (
-    <div className="rightbarContainer">
-      <div className="rightbarWrapper"></div>
-      {user ? <ProfileRightbar /> : <HomeRightbar />}
-    </div>
-  );
+  return user ? <ProfileRightbar /> : "";
 }

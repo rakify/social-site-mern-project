@@ -1,28 +1,9 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer, useEffect } from "react";
 import AuthReducer from "./AuthReducer";
 
+
 const INITIAL_STATE = {
-  user: {
-    profilePicture:
-      "https://img.icons8.com/pastel-glyph/64/000000/person-male--v3.png",
-    coverPicture:
-      "http://apy-ingenierie.fr/wp-content/plugins/uix-page-builder/uixpb_templates/images/UixPageBuilderTmpl/default-cover-6.jpg",
-    isAdmin: false,
-    relationship: "Single",
-    _id: "611de9694baaa81d3868c0e8",
-    username: "john",
-    email: "john@gmail.com",
-    password: "$2b$10$BgLuJU6zeWvvEnciCP0Bwumb6EUdRI0BdQlUlkFdYrq3iknqW7Ebu",
-    createdAt: "2021-08-19T05:17:29.974Z",
-    updatedAt: "2021-08-19T07:37:18.720Z",
-    __v: 0,
-    desc: "Welcome to my profile",
-    city: "Dhaka",
-    gender: "Male",
-    hometown: "Narsingdi",
-    followings: [],
-    followers: [],
-  },
+  user: JSON.parse(localStorage.getItem("user")) || null,
   isFetching: null,
   error: false,
 };
@@ -31,6 +12,15 @@ export const AuthContext = createContext(INITIAL_STATE);
 
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+  //useReducer takes two parameters one is function (AuthReducer) another is current state (INITIAL_STATE)
+  //useReducer returns two parameters first one is current state another one is function called dispatch
+  //dispatch is the function what we call in order to update our state. it will call AuthReducer in order to update
+  //AuthReducer going to take two parameters one is current state another one is action that we pass to dispatch
+  //when we call dispatch it will be set to action variable and reducer going to return new updated state
+
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(state.user));
+  }, [state.user]);
 
   return (
     <AuthContext.Provider

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import "./post.css";
-import { MoreVert } from "@material-ui/icons";
+import { MoreVert, ThumbUp, Comment } from "@material-ui/icons";
 import axios from "axios";
 import { format } from "timeago.js";
 import { Link } from "react-router-dom";
@@ -32,6 +32,7 @@ export default function Post({ post }) {
     setLike(isLiked ? like - 1 : like + 1);
     setIsLiked(!isLiked);
   };
+
   return (
     <div className="postContainer">
       <div className="postWrapper">
@@ -55,26 +56,41 @@ export default function Post({ post }) {
           <span className="postText">{post?.desc}</span>
           <img className="postImg" src={post.img} alt="" />
         </div>
+
+        {isLiked && like === 1 ? (
+          <span className="badge">You</span>
+        ) : (
+          ""
+        )}
+        {isLiked && like > 1 ? (
+          <span className="badge">
+            You and {like - 1} others
+          </span>
+        ) : (
+          ""
+        )}
+        {!isLiked && like > 0 ? (
+          <span className="badge">
+          {like} People
+          </span>
+        ) : (
+          ""
+        )}
+        <hr />
         <div className="postBottom">
           <div className="postBottomLeft">
-            <img
-              className="likeIcon"
-              src="/assets/like.png"
-              alt=""
-              onClick={likeHandler}
-            />
-            <img
-              className="likeIcon"
-              src="/assets/heart.png"
-              alt=""
-              onClick={likeHandler}
-            />
-            <span className="postLikeCounter">{like} people like it</span>
+            <span className="likeIcon" onClick={likeHandler}>
+              <ThumbUp style={{ color: "gray" }} />
+            </span>
+            {isLiked ? "Unlike" : "Like"}
           </div>
-          <div className="postBottoRight">
-            <span className="postCommentText">{post.comment} comments</span>
+          <div className="postBottomRight">
+            <span className="postCommentText">
+              <Comment style={{ color: "gray" }} />
+            </span>
+            Add Comment
           </div>
-        </div>
+        </div><hr />
       </div>
     </div>
   );

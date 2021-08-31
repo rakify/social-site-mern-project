@@ -7,7 +7,8 @@ require("dotenv").config();
 const usersRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postsRoute = require("./routes/posts");
-
+const conversationsRoute = require("./routes/conversations");
+const messagesRoute = require("./routes/messages");
 
 //connect to db
 mongoose.connect(
@@ -32,6 +33,9 @@ app.use(morgan("common"));
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postsRoute);
+app.use("/api/conversations", conversationsRoute);
+app.use("/api/messages", messagesRoute);
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

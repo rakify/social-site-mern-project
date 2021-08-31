@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
-const User = require("../models//User");
+const User = require("../models/User");
 
 //UPDATE USER
 router.put("/:id", async (req, res) => {
@@ -121,6 +121,16 @@ router.put("/:id/unfollow", async (req, res) => {
     }
   } else {
     res.status(403).json("you cant unfollow yourself");
+  }
+});
+
+//GET NEW REGISTERED USERS
+router.get("/all/new", async (req, res) => {
+  try {
+    const users = await User.find().sort({"createdAt": -1}).limit(5);
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
