@@ -1,0 +1,129 @@
+.commentInput{
+    width: 50%;
+    padding: 1rem;
+    /* margin: 1rem 0; */
+    box-sizing: border-box;
+    border-radius: 2rem;
+    outline: none;
+}
+
+/* Loading Button */
+/* credit: https://dev.to/dcodeyt/create-a-button-with-a-loading-spinner-in-html-css-1c0h */
+button {
+  border: none;
+  padding: 0.5rem;
+  border-radius: 5rem;
+  background-color: green;
+  font-weight: bold;
+  font-size: 0.5rem;
+  margin-right: 2rem;
+  cursor: none;
+  color: white;
+  margin-bottom: 1rem;
+  position: relative;
+  }
+  
+  button:active {
+    background: #007a63;
+  }
+  
+  .button__text {
+    font: bold 20px "Quicksand", san-serif;
+    color: #ffffff;
+    transition: all 0.2s;
+  }
+  
+  .button--loading .button__text {
+    visibility: hidden;
+    opacity: 0;
+  }
+  
+  .button--loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 4px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+  }
+  
+  @keyframes button-loading-spinner {
+    from {
+      transform: rotate(0turn);
+    }
+  
+    to {
+      transform: rotate(1turn);
+    }
+  }
+  
+.comment-thread {
+    width: 50%;
+    margin: auto;
+    padding: 0 3rem;
+    background-color: #fff;
+    border: 1px solid transparent; /* Removes margin collapse */
+}
+
+/* Comment */
+.comment {
+    position: relative;
+    margin: 2rem auto;
+    border-bottom: 0.2rem solid gray;
+}
+.comment-heading {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 50px;
+    font-size: 1.5rem;
+}
+/* .comment-voting {
+    width: 20px;
+    height: 32px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+.comment-voting button {
+    display: block;
+    width: 100%;
+    height: 50%;
+    padding: 0;
+    border: 0;
+    font-size: 10px;
+} */
+.comment-info {
+    color: rgba(0, 0, 0, 0.5);
+    flex: 80%;
+    text-transform: capitalize;
+}
+.comment-date{
+flex: 20%;
+font-style: italic;
+}
+.comment-author {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 300;
+    font-size: 2rem;
+    text-decoration: none;
+    padding-right: 5rem;
+}
+.comment-author:hover {
+    text-decoration: underline;
+}
+.replies {
+    margin-left: 20px;
+}
+.error{
+    color: red;
+}
+.success{
+    color: green;
+}

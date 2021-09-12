@@ -1,5 +1,5 @@
 .homeContainer{
     display: flex;
+    justify-content: flex-start;
     flex-direction: row;
-    width: 100%;
 }

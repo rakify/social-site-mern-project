@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const path = require("path");
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 const User = require("../models/User");
 
 //for upload and storing image
@@ -62,13 +63,36 @@ router.post("/", upload.single("file"), async (req, res) => {
 });
 
 //UPDATE A POST
-router.put("/:id", async (req, res) => {
+router.put("/:id", upload.single("updateFile"), async (req, res) => {
   const { id } = req.params;
-  const { userId } = req.body;
+  const { userId, noImg = false, desc } = req.body;
+
+  const updatedPost = {
+    userId,
+    desc,
+  };
+
   try {
     const post = await Post.findById(id);
     if (post.userId === userId) {
-      await post.updateOne({ $set: req.body });
+      //if theres image upload it
+      if (req.file) {
+        try {
+          let result = await cloudinary.uploader.upload(req.file.path, {
+            folder: `social/${userId}`,
+          });
+          updatedPost.img = result.secure_url;
+          updatedPost.img_id = result.public_id;
+        } catch (err) {
+          res.send(err);
+        }
+      }
+      // if theres no image attached set img and img_id empty also destroy any img if there is
+      if (noImg) {
+        (updatedPost.img = ""), (updatedPost.img_id = "");
+        post.img && await cloudinary.uploader.destroy(post.img_id);
+      }
+      await post.updateOne({ $set: updatedPost });
       res.status(200).json("the post has been updated");
     } else {
       res.status(403).json("you can update only your post");
@@ -82,6 +106,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const { userId } = req.body;
+  
   try {
     const post = await Post.findById(id);
     if (post.userId === userId) {
@@ -160,4 +185,59 @@ router.get("/fetch/public", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+
+
+
+
+
+
+
+//GET COMMENTS BY POST RECENT 4 COMMENTS
+router.get("/comments/all", async (req, res) => {
+  const { postId } = req.query;
+  try {
+    const comments = await Comment.find({ postId: postId })
+      .sort({ createdAt: -1 })
+      .limit(4);
+    res.status(200).json(comments);
+  } catch (err) {
+    res.status(500).json("No comments");
+  }
+});
+
+//POST NEW COMMENT
+router.post("/:postId/comment", async (req, res) => {
+  try {
+    const comment = new Comment(req.body);
+    const newComment = await comment.save();
+    const post = await Post.findById(req.body.postId);
+    await post.updateOne({ $push: { comments: newComment._id } });
+    res.status(200).json("Comment Added");
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+//DELETE A COMMENT
+router.delete("/comment/:id", async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+  console.log(userId,id)
+  try {
+    const comment = await Comment.findById(id);
+    if (comment.userId === userId) {
+      console.log(comment)
+      await Post.findByIdAndUpdate(comment.postId, { $pull: { comments: comment._id } });
+      await comment.deleteOne();
+      res.status(200).json("the comment has been deleted");
+    } else {
+      res.status(403).json("you can delete only your post");
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
 module.exports = router;

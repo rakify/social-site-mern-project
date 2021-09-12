@@ -1,26 +1,13 @@
 import "./rightbar.css";
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Add, Remove } from "@material-ui/icons";
 
-export default function Rightbar({ user }) {
+export default function Rightbar({ user, friends }) {
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [friends, setFriends] = useState([]);
-  const isFollowing = currentUser.followings.includes(user._id);
-
-  useEffect(() => {
-    const getFriends = async () => {
-      try {
-        const friendList = await axios.get(`/users/friends/${user._id}`);
-        setFriends(friendList.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getFriends();
-  }, [user]);
+  const isFollowing = currentUser.followings.includes(user?._id);
 
   const handleFollow = async () => {
     try {
@@ -81,7 +68,7 @@ export default function Rightbar({ user }) {
         <h4 className="rightbarTitle">User Followings</h4>
         <div className="rightbarFollowings">
           {friends.map((friend) => (
-            <Link
+            <Link key={friend._id}
               to={`/profile/${friend.username}`}
               style={{ textDecoration: "none" }}
             >

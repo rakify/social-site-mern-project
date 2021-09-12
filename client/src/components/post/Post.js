@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import "./post.css";
-import { MoreVert, ThumbUp, Comment } from "@material-ui/icons";
+import Comments from "../comments/Comments";
+import EditPost from "../editPost/EditPost";
+import { Edit, Delete, ThumbUp, Comment } from "@material-ui/icons";
 import axios from "axios";
 import { format } from "timeago.js";
 import { Link } from "react-router-dom";
@@ -12,6 +14,8 @@ export default function Post({ post }) {
   const [like, setLike] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(false);
   const [user, setUser] = useState({});
+  const [showEdit, setShowEdit] = useState(false);
+  const [showComment, setShowComment] = useState(false);
 
   useEffect(() => {
     setIsLiked(post.likes.includes(currentUser._id));
@@ -33,6 +37,24 @@ export default function Post({ post }) {
     setIsLiked(!isLiked);
   };
 
+  const editHandler = () => {
+    setShowEdit(!showEdit);
+  };
+
+  const deleteHandler = async () => {
+    try {
+      window.confirm("Are you sure?") &&
+        (await axios.delete(`/posts/${post._id}`, {
+          data: { userId: currentUser._id },
+        })) &&
+        window.setTimeout(function () {
+          window.location.reload();
+        }, 1000);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="postContainer">
       <div className="postWrapper">
@@ -48,10 +70,20 @@ export default function Post({ post }) {
             <span className="postUsername">{user.username}</span>
             <span className="postDate">{format(post.createdAt)}</span>
           </div>
-          <div className="postTopRight">
-            <MoreVert />
-          </div>
+          {user.username === currentUser.username && (
+            <div className="postTopRight">
+              <button className="postTopRightEdit" onClick={editHandler}>
+                <Edit />
+              </button>
+              <button className="postTopRightDelete" onClick={deleteHandler}>
+                <Delete />
+              </button>
+            </div>
+          )}
         </div>
+
+        {showEdit && <EditPost user={currentUser} post={post} />}
+
         <div className="postCenter">
           <span className="postText">{post?.desc}</span>
           <img className="postImg" src={post.img} alt="" />
@@ -59,38 +91,58 @@ export default function Post({ post }) {
 
         {isLiked && like === 1 ? (
           <span className="badge">You</span>
+        ) : isLiked && like === 2 ? (
+          <span className="badge">You and {like - 1} other</span>
+        ) : isLiked && like > 2 ? (
+          <span className="badge">You and {like - 1} others</span>
+        ) : !isLiked && like === 1 ? (
+          <span className="badge">1 People</span>
+        ) : !isLiked && like > 1 ? (
+          <span className="badge">{like} Peoples</span>
         ) : (
           ""
         )}
-        {isLiked && like > 1 ? (
-          <span className="badge">
-            You and {like - 1} others
-          </span>
-        ) : (
-          ""
-        )}
-        {!isLiked && like > 0 ? (
-          <span className="badge">
-          {like} People
-          </span>
-        ) : (
-          ""
-        )}
+
         <hr />
+
         <div className="postBottom">
-          <div className="postBottomLeft">
-            <span className="likeIcon" onClick={likeHandler}>
-              <ThumbUp style={{ color: "gray" }} />
+          <div className="postBottomLeft" onClick={likeHandler}>
+            <span className="likeIcon">
+              {isLiked ? (
+                <ThumbUp style={{ color: "green" }} />
+              ) : (
+                <ThumbUp style={{ color: "gray" }} />
+              )}
             </span>
             {isLiked ? "Unlike" : "Like"}
           </div>
-          <div className="postBottomRight">
+          <div
+            className="postBottomRight"
+            onClick={() => setShowComment(!showComment)}
+          >
             <span className="postCommentText">
-              <Comment style={{ color: "gray" }} />
+              {post.comments.length === 0 ? (
+                <Comment style={{ color: "gray" }} />
+              ) : (
+                <Comment style={{ color: "green" }} />
+              )}
             </span>
-            Add Comment
+            {post.comments.length > 1
+              ? `${post.comments.length} Comments`
+              : post.comments.length === 1
+              ? `1 Comment`
+              : "Add Comment"}
           </div>
-        </div><hr />
+        </div>
+        <hr />
+        {showComment && (
+          <div className="postComments">
+            <Comments
+              postId={post._id}
+              user={currentUser}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

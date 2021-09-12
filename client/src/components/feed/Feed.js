@@ -23,7 +23,7 @@ export default function Feed({ username }) {
     };
     fetchPosts();
   }, [username, user]);
-
+  
   return (
     <div className="feedContainer">
         {(!username || username === user.username) && <Share />}

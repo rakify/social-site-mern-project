@@ -5,6 +5,7 @@ import {
   Room,
   EmojiEmotions,
   Cancel,
+  PostAdd,
 } from "@material-ui/icons";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
@@ -15,6 +16,7 @@ export default function Share() {
   const { user } = useContext(AuthContext);
   const desc = useRef();
   const [file, setFile] = useState(null);
+  const [validation, setValidation] = useState({ isLoading: false });
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -29,7 +31,12 @@ export default function Share() {
           "Content-Type": "multipart/form-data",
         },
       });
-      window.location.reload();
+      setValidation({
+        isLoading: true,
+      });
+      window.setTimeout(function () {
+        window.location.reload();
+      }, 1000);
     } catch (err) {
       console.log(err);
     }
@@ -59,37 +66,48 @@ export default function Share() {
                 className="shareImg"
                 alt=""
               />
-              <Cancel className="shareCancelImg" onClick={()=>setFile(null)} />
+              <Cancel
+                className="shareCancelImg"
+                onClick={() => setFile(null)}
+              />
             </div>
           )}
           <div className="shareBottom">
-            <div className="shareOptions">
-              <label htmlFor="file" className="shareOption">
-                <PermMedia htmlColor="tomato" className="shareIcon" />
-                <span className="shareOptionText">Photo or Video</span>
-              </label>
-              <input
-                style={{ display: "none" }}
-                type="file"
-                name=""
-                id="file"
-                accept=".png,.jpg,.jpeg"
-                onChange={(e) => setFile(e.target.files[0])}
-              />
-              <div className="shareOption">
-                <Label htmlColor="blue" className="shareIcon" />
-                <span className="shareOptionText">Tag</span>
-              </div>
-              <div className="shareOption">
-                <Room htmlColor="green" className="shareIcon" />
-                <span className="shareOptionText">Location</span>
-              </div>
-              <div className="shareOption">
-                <EmojiEmotions htmlColor="goldenrod" className="shareIcon" />
-                <span className="shareOptionText">Feelings</span>
-              </div>
-              <button className="shareButton" type="submit">
-                Share
+            <label htmlFor="file" className="shareOption">
+              <PermMedia htmlColor="tomato" className="shareIcon" />
+              <span className="shareOptionText">Photo or Video</span>
+            </label>
+            <input
+              style={{ display: "none" }}
+              type="file"
+              name=""
+              id="file"
+              accept=".png,.jpg,.jpeg"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+            <div className="shareOption">
+              <Label htmlColor="blue" className="shareIcon" />
+              <span className="shareOptionText">Tag</span>
+            </div>
+            <div className="shareOption">
+              <Room htmlColor="green" className="shareIcon" />
+              <span className="shareOptionText">Location</span>
+            </div>
+            <div className="shareOption">
+              <EmojiEmotions htmlColor="goldenrod" className="shareIcon" />
+              <span className="shareOptionText">Feelings</span>
+            </div>
+            <div className="shareOption">
+              <button
+                className={
+                  validation.isLoading ? "button--loading" : "shareButton"
+                }
+                type="submit"
+                disabled={validation.isLoading}
+              >
+                <span className="button__text">
+                  <PostAdd /> Publish
+                </span>
               </button>
             </div>
           </div>

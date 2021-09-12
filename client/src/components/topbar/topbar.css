@@ -1,10 +1,10 @@
 .topbarContainer{
-    height: 4rem;
+    height: 5rem;
     width: 100%;
-    min-width: 45rem;
     background-color: #1877f2;
     display: flex;
     align-items: center;
+    justify-content: stretch;
     position: sticky;
     top: 0;
     z-index: 999;
@@ -15,7 +15,7 @@
 }
 
 .logo{
-    font-size: 2rem;
+    font-size: 4rem;
     margin-left: 1rem;
     font-weight: bold;
     color: white;
@@ -28,15 +28,15 @@
 
 .searchBar{
     width: 22rem;
-    height: 30px;
+    height: 3rem;
     background-color: white;
-    border-radius: 30px;
+    border-radius: 3rem;
     display: flex;
-    align-items: center;
+    justify-content: flex-start;
 }
 
 .searchIcon{
-    font-size: 20px !important;
+    font-size: 3rem !important;
     margin-left: 10px;
 }
 

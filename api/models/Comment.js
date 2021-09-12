@@ -1,30 +1,34 @@
 const mongoose = require("mongoose");
 
-const PostSchema = new mongoose.Schema(
+const CommentSchema = new mongoose.Schema(
   {
+    username: {
+      type: String,
+      required: true,
+    },
     userId: {
       type: String,
       required: true,
     },
-    desc: {
+    postId: {
       type: String,
-      trim: true,
-      maxlength: 500,
       required: true,
     },
-    img: {
+    userImg: {
       type: String,
-      default: "",
+      required: true
     },
-    img_id: {
+    text: {
       type: String,
-      default: "",
+      trim: true,
+      maxlength: [500,"maxlength passed"],
+      required: true,
     },
     likes: {
       type: Array,
       default: [],
     },
-    comments: {
+    dislikes: {
       type: Array,
       default: [],
     },
@@ -32,4 +36,4 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Posts", PostSchema);
+module.exports = mongoose.model("Comments", CommentSchema);
